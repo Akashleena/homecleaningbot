@@ -1,5 +1,5 @@
 <sdf version="1.8">
-  <model name="diff_drive_robot">
+  <model name="diff_drive">
 
     <!-- ═══════════════════════════════════════════════
          CHASSIS
@@ -12,7 +12,7 @@
            Izz = 5/12*(0.4²+0.3²)  = 0.104166
          ═══════════════════════════════════════════════ -->
     <link name="chassis">
-      <pose>0 0 0.175 0 0 0</pose>  <!-- FIXED: was 0.1 -->
+      <pose>0 0 0.175 0 0 0</pose> 
       <inertial>
         <mass>5.0</mass>
         <inertia>
@@ -74,7 +74,7 @@
       <collision name="collision">
         <geometry><cylinder><radius>0.1</radius><length>0.05</length></cylinder></geometry>
         <surface>
-          <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+          <friction><ode><mu>1.0</mu><mu2>0.7</mu2></ode></friction>
           <contact><ode><min_depth>0.001</min_depth><kp>1e6</kp><kd>100</kd></ode></contact>
         </surface>
       </collision>
@@ -93,7 +93,7 @@
           <velocity>10.0</velocity>
         </limit>
         <dynamics>
-          <damping>0.05</damping>   <!-- FIXED: was 0.5 — too high -->
+          <damping>0.1</damping>   <!-- FIXED: was 0.5 — too high -->
           <friction>0.02</friction> <!-- FIXED: was 0.7 — too high -->
         </dynamics>
       </axis>
@@ -120,7 +120,7 @@
       <collision name="collision">
         <geometry><cylinder><radius>0.1</radius><length>0.05</length></cylinder></geometry>
         <surface>
-          <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+          <friction><ode><mu>1.0</mu><mu2>0.7</mu2></ode></friction>
           <contact><ode><min_depth>0.001</min_depth><kp>1e6</kp><kd>100</kd></ode></contact>
         </surface>
       </collision>
@@ -139,7 +139,7 @@
           <velocity>10.0</velocity>
         </limit>
         <dynamics>
-          <damping>0.05</damping>
+          <damping>0.1</damping>
           <friction>0.02</friction>
         </dynamics>
       </axis>
@@ -166,7 +166,7 @@
       <collision name="collision">
         <geometry><cylinder><radius>0.1</radius><length>0.05</length></cylinder></geometry>
         <surface>
-          <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+          <friction><ode><mu>1.0</mu><mu2>0.7</mu2></ode></friction>
           <contact><ode><min_depth>0.001</min_depth><kp>1e6</kp><kd>100</kd></ode></contact>
         </surface>
       </collision>
@@ -185,7 +185,7 @@
           <velocity>10.0</velocity>
         </limit>
         <dynamics>
-          <damping>0.05</damping>
+          <damping>0.1</damping>
           <friction>0.02</friction>
         </dynamics>
       </axis>
@@ -212,7 +212,7 @@
       <collision name="collision">
         <geometry><cylinder><radius>0.1</radius><length>0.05</length></cylinder></geometry>
         <surface>
-          <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+          <friction><ode><mu>1.0</mu><mu2>0.7</mu2></ode></friction>
           <contact><ode><min_depth>0.001</min_depth><kp>1e6</kp><kd>100</kd></ode></contact>
         </surface>
       </collision>
@@ -231,7 +231,7 @@
           <velocity>10.0</velocity>
         </limit>
         <dynamics>
-          <damping>0.05</damping>
+          <damping>0.1</damping>
           <friction>0.02</friction>
         </dynamics>
       </axis>
@@ -261,7 +261,7 @@
       <min_linear_acceleration>-1.0</min_linear_acceleration>
       <max_angular_acceleration>2.0</max_angular_acceleration>
       <min_angular_acceleration>-2.0</min_angular_acceleration>
-      <topic>cmd_vel</topic>
+      <topic>/model/diff_drive/cmd_vel</topic>
       <odom_topic>odom</odom_topic>
       <frame_id>odom</frame_id>
       <child_frame_id>base_link</child_frame_id>
