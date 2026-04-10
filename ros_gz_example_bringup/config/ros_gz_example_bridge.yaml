@@ -55,7 +55,7 @@
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 - ros_topic_name: "/bumper/contact"
-  gz_topic_name: "/world/demo/model/diff_drive/link/bumper_link/sensor/bumper_contact/contact"
+  gz_topic_name: "/world/demo/model/diff_drive/link/chassis/sensor/bumper_contact/contact"
   ros_type_name: "ros_gz_interfaces/msg/Contacts"
   gz_type_name: "gz.msgs.Contacts"
   direction: GZ_TO_ROS
