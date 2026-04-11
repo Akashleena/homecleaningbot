@@ -378,39 +378,34 @@
       </link>
     </model>
 
-    <!-- ================================================================
-         PICKUP OBJECTS  — 9 total across both rooms
-         Types: toy blocks (box), drink cans (cylinder), balls (sphere)
-         All dynamic, primitive collision only, restitution=0.
+        <!-- ================================================================
+         PICKUP OBJECTS — 17 total
+         Floor: 4 in Room A, 4 in Room B
+         Tables: 4 on table_a, 5 on table_b (incl. existing toy_on_table)
 
-         Inertia formulae used:
-           Solid box  a×b×c at mass m: Ixx = m/12*(b²+c²), etc.
-           Solid cylinder r,l at mass m:
-             Ixx=Iyy = m/12*(3r²+l²),  Izz = m/2*r²
-           Solid sphere radius r at mass m:
-             Ixx=Iyy=Izz = 2/5*m*r²
+         Shapes: box (toy block), cylinder (can), sphere (ball)
+         All dynamic, primitive collision only, restitution=0, mu=0.6
 
-         Object   shape     size            mass   Ixx      Iyy      Izz
-         -------  --------  --------------  -----  -------  -------  -------
-         toy_r    box       0.06³           0.20   1.2e-4   1.2e-4   1.2e-4
-         toy_g    box       0.07×0.05×0.05  0.20   8.3e-5   1.2e-4   1.0e-4
-         toy_b    box       0.05³           0.15   6.25e-5  6.25e-5  6.25e-5
-         can_y    cylinder  r=0.033,l=0.115 0.18   1.43e-4  1.43e-4  9.8e-5
-         can_c    cylinder  r=0.033,l=0.115 0.18   1.43e-4  1.43e-4  9.8e-5
-         ball_red sphere    r=0.04          0.12   7.68e-5  7.68e-5  7.68e-5
-         ball_blu sphere    r=0.04          0.12   7.68e-5  7.68e-5  7.68e-5
-         ball_grn sphere    r=0.035         0.10   4.9e-5   4.9e-5   4.9e-5
-         toy_tab  box       0.05³           0.15   6.25e-5  6.25e-5  6.25e-5
-                                            (on table — tests 60s stability)
+         Inertia formulae:
+           Box  a×b×c, m:  Ixx=m/12*(b²+c²), Iyy=m/12*(a²+c²), Izz=m/12*(a²+b²)
+           Cyl  r,l,   m:  Ixx=Iyy=m/12*(3r²+l²),  Izz=m/2*r²
+           Sph  r,     m:  Ixx=Iyy=Izz=2/5*m*r²
 
-         mu=0.6 for all: slides plausibly when pushed, won't shoot away.
+         Table surface z = 0.770 m (tabletop top face)
+         Object z on table = 0.770 + half_height:
+           0.06 cube  → 0.800   0.05 cube  → 0.795
+           0.04 cube  → 0.790   0.07 tall  → 0.805
+           can h=0.115 → 0.8275  ball r=0.03 → 0.800
+           ball r=0.035→ 0.805   disc h=0.015→ 0.7775
     ================================================================ -->
 
-    <!-- === Room A pickup objects (4) === -->
+    <!-- ══════════════════════════════════════════
+         ROOM A FLOOR OBJECTS  (x < 1.0)
+    ══════════════════════════════════════════ -->
 
-    <!-- Red toy block -->
-    <model name="toy_red">
-      <static>false</static><pose>-1.4 -1.6 0.03 0 0 0</pose>
+    <!-- Red toy block 0.06m cube -->
+    <model name="floor_a_block_red">
+      <static>false</static><pose>-1.4 -1.6 0.030 0 0 0</pose>
       <link name="link">
         <inertial><mass>0.20</mass>
           <inertia><ixx>0.000120</ixx><iyy>0.000120</iyy><izz>0.000120</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
@@ -424,8 +419,8 @@
       </link>
     </model>
 
-    <!-- Green toy block (non-cube) -->
-    <model name="toy_green">
+    <!-- Green non-cube block 0.07×0.05×0.05 -->
+    <model name="floor_a_block_green">
       <static>false</static><pose>-2.6 -0.8 0.025 0 0 0</pose>
       <link name="link">
         <inertial><mass>0.20</mass>
@@ -440,8 +435,8 @@
       </link>
     </model>
 
-    <!-- Yellow drink can -->
-    <model name="can_yellow">
+    <!-- Yellow drink can (cylinder) -->
+    <model name="floor_a_can_yellow">
       <static>false</static><pose>-0.8 1.6 0.0575 0 0 0</pose>
       <link name="link">
         <inertial><mass>0.18</mass>
@@ -456,9 +451,9 @@
       </link>
     </model>
 
-    <!-- Red ball (near collection box for easy demo) -->
-    <model name="ball_red">
-      <static>false</static><pose>-2.0 -0.5 0.04 0 0 0</pose>
+    <!-- Red ball (sphere) r=0.04 near collection box -->
+    <model name="floor_a_ball_red">
+      <static>false</static><pose>-2.0 -0.5 0.040 0 0 0</pose>
       <link name="link">
         <inertial><mass>0.12</mass>
           <inertia><ixx>0.0000768</ixx><iyy>0.0000768</iyy><izz>0.0000768</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
@@ -472,10 +467,80 @@
       </link>
     </model>
 
-    <!-- === Room B pickup objects (4) + 1 on table === -->
+    <!-- ══════════════════════════════════════════
+         TABLE A OBJECTS  table centre (-2.0, 1.5)
+    ══════════════════════════════════════════ -->
 
-    <!-- Blue toy block -->
-    <model name="toy_blue">
+    <!-- Orange rectangular block 0.06×0.04×0.04  z=0.790 -->
+    <model name="ta_block_orange">
+      <static>false</static><pose>-2.3 1.50 0.790 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>0.18</mass>
+          <inertia><ixx>0.000080</ixx><iyy>0.000080</iyy><izz>0.000060</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="col"><geometry><box><size>0.06 0.04 0.04</size></box></geometry>
+          <surface><friction><ode><mu>0.6</mu><mu2>0.6</mu2></ode></friction>
+            <contact><ode><kp>500000</kp><kd>10</kd><min_depth>0.001</min_depth><max_vel>0.1</max_vel></ode></contact>
+            <bounce><restitution_coefficient>0.0</restitution_coefficient><threshold>100000</threshold></bounce>
+          </surface></collision>
+        <visual name="vis"><geometry><box><size>0.06 0.04 0.04</size></box></geometry>
+          <material><ambient>0.95 0.50 0.05 1</ambient><diffuse>0.95 0.50 0.05 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Pink small cube 0.04³  z=0.790 -->
+    <model name="ta_block_pink">
+      <static>false</static><pose>-1.90 1.60 0.790 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>0.12</mass>
+          <inertia><ixx>0.000032</ixx><iyy>0.000032</iyy><izz>0.000032</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="col"><geometry><box><size>0.04 0.04 0.04</size></box></geometry>
+          <surface><friction><ode><mu>0.6</mu><mu2>0.6</mu2></ode></friction>
+            <contact><ode><kp>500000</kp><kd>10</kd><min_depth>0.001</min_depth><max_vel>0.1</max_vel></ode></contact>
+            <bounce><restitution_coefficient>0.0</restitution_coefficient><threshold>100000</threshold></bounce>
+          </surface></collision>
+        <visual name="vis"><geometry><box><size>0.04 0.04 0.04</size></box></geometry>
+          <material><ambient>0.95 0.40 0.70 1</ambient><diffuse>0.95 0.40 0.70 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Silver can on table_a  z=0.8275 -->
+    <model name="ta_can_silver">
+      <static>false</static><pose>-2.10 1.35 0.8275 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>0.18</mass>
+          <inertia><ixx>0.000143</ixx><iyy>0.000143</iyy><izz>0.000098</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="col"><geometry><cylinder><radius>0.033</radius><length>0.115</length></cylinder></geometry>
+          <surface><friction><ode><mu>0.6</mu><mu2>0.6</mu2></ode></friction>
+            <contact><ode><kp>500000</kp><kd>10</kd><min_depth>0.001</min_depth><max_vel>0.1</max_vel></ode></contact>
+            <bounce><restitution_coefficient>0.0</restitution_coefficient><threshold>100000</threshold></bounce>
+          </surface></collision>
+        <visual name="vis"><geometry><cylinder><radius>0.033</radius><length>0.115</length></cylinder></geometry>
+          <material><ambient>0.75 0.75 0.75 1</ambient><diffuse>0.75 0.75 0.75 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- White ball on table_a r=0.03  z=0.800 -->
+    <model name="ta_ball_white">
+      <static>false</static><pose>-1.75 1.45 0.800 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>0.08</mass>
+          <inertia><ixx>0.0000288</ixx><iyy>0.0000288</iyy><izz>0.0000288</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="col"><geometry><sphere><radius>0.030</radius></sphere></geometry>
+          <surface><friction><ode><mu>0.6</mu><mu2>0.6</mu2></ode></friction>
+            <contact><ode><kp>500000</kp><kd>10</kd><min_depth>0.001</min_depth><max_vel>0.1</max_vel></ode></contact>
+            <bounce><restitution_coefficient>0.0</restitution_coefficient><threshold>100000</threshold></bounce>
+          </surface></collision>
+        <visual name="vis"><geometry><sphere><radius>0.030</radius></sphere></geometry>
+          <material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.95 0.95 0.95 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- ══════════════════════════════════════════
+         ROOM B FLOOR OBJECTS  (x > 1.0)
+    ══════════════════════════════════════════ -->
+
+    <!-- Blue toy block 0.05³ -->
+    <model name="floor_b_block_blue">
       <static>false</static><pose>1.6 0.6 0.025 0 0 0</pose>
       <link name="link">
         <inertial><mass>0.15</mass>
@@ -490,8 +555,8 @@
       </link>
     </model>
 
-    <!-- Cyan drink can -->
-    <model name="can_cyan">
+    <!-- Cyan drink can (cylinder) -->
+    <model name="floor_b_can_cyan">
       <static>false</static><pose>1.9 -1.9 0.0575 0 0 0</pose>
       <link name="link">
         <inertial><mass>0.18</mass>
@@ -506,9 +571,9 @@
       </link>
     </model>
 
-    <!-- Blue ball -->
-    <model name="ball_blue">
-      <static>false</static><pose>3.0 0.4 0.04 0 0 0</pose>
+    <!-- Blue ball (sphere) r=0.04 -->
+    <model name="floor_b_ball_blue">
+      <static>false</static><pose>3.0 0.4 0.040 0 0 0</pose>
       <link name="link">
         <inertial><mass>0.12</mass>
           <inertia><ixx>0.0000768</ixx><iyy>0.0000768</iyy><izz>0.0000768</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
@@ -522,8 +587,8 @@
       </link>
     </model>
 
-    <!-- Small green ball (near couch dead-end) -->
-    <model name="ball_green">
+    <!-- Small green ball r=0.035 near couch dead-end -->
+    <model name="floor_b_ball_green">
       <static>false</static><pose>2.4 1.5 0.035 0 0 0</pose>
       <link name="link">
         <inertial><mass>0.10</mass>
@@ -538,10 +603,13 @@
       </link>
     </model>
 
-    <!-- Toy block on table_b — tests 60-second stability requirement.
-         Resting at table surface z=0.77 + half height 0.025 = 0.795 m -->
-    <model name="toy_on_table">
-      <static>false</static><pose>2.5 -1.0 0.795 0 0 0</pose>
+    <!-- ══════════════════════════════════════════
+         TABLE B OBJECTS  table centre (2.5, -1.0)
+    ══════════════════════════════════════════ -->
+
+    <!-- Yellow cube 0.05³ — tests 60s stability  z=0.795 -->
+    <model name="tb_block_yellow">
+      <static>false</static><pose>2.50 -1.00 0.795 0 0 0</pose>
       <link name="link">
         <inertial><mass>0.15</mass>
           <inertia><ixx>0.0000625</ixx><iyy>0.0000625</iyy><izz>0.0000625</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
@@ -552,6 +620,70 @@
           </surface></collision>
         <visual name="vis"><geometry><box><size>0.05 0.05 0.05</size></box></geometry>
           <material><ambient>0.92 0.92 0.12 1</ambient><diffuse>0.92 0.92 0.12 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Purple tall thin block 0.04×0.04×0.07  z=0.805 -->
+    <model name="tb_block_purple">
+      <static>false</static><pose>2.20 -1.00 0.805 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>0.14</mass>
+          <inertia><ixx>0.000095</ixx><iyy>0.000063</iyy><izz>0.000045</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="col"><geometry><box><size>0.04 0.04 0.07</size></box></geometry>
+          <surface><friction><ode><mu>0.6</mu><mu2>0.6</mu2></ode></friction>
+            <contact><ode><kp>500000</kp><kd>10</kd><min_depth>0.001</min_depth><max_vel>0.1</max_vel></ode></contact>
+            <bounce><restitution_coefficient>0.0</restitution_coefficient><threshold>100000</threshold></bounce>
+          </surface></collision>
+        <visual name="vis"><geometry><box><size>0.04 0.04 0.07</size></box></geometry>
+          <material><ambient>0.55 0.10 0.80 1</ambient><diffuse>0.55 0.10 0.80 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Red can on table_b  z=0.8275 -->
+    <model name="tb_can_red">
+      <static>false</static><pose>2.65 -0.85 0.8275 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>0.18</mass>
+          <inertia><ixx>0.000143</ixx><iyy>0.000143</iyy><izz>0.000098</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="col"><geometry><cylinder><radius>0.033</radius><length>0.115</length></cylinder></geometry>
+          <surface><friction><ode><mu>0.6</mu><mu2>0.6</mu2></ode></friction>
+            <contact><ode><kp>500000</kp><kd>10</kd><min_depth>0.001</min_depth><max_vel>0.1</max_vel></ode></contact>
+            <bounce><restitution_coefficient>0.0</restitution_coefficient><threshold>100000</threshold></bounce>
+          </surface></collision>
+        <visual name="vis"><geometry><cylinder><radius>0.033</radius><length>0.115</length></cylinder></geometry>
+          <material><ambient>0.88 0.10 0.10 1</ambient><diffuse>0.88 0.10 0.10 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Orange ball on table_b r=0.035  z=0.805 -->
+    <model name="tb_ball_orange">
+      <static>false</static><pose>2.70 -1.15 0.805 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>0.10</mass>
+          <inertia><ixx>0.000049</ixx><iyy>0.000049</iyy><izz>0.000049</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="col"><geometry><sphere><radius>0.035</radius></sphere></geometry>
+          <surface><friction><ode><mu>0.6</mu><mu2>0.6</mu2></ode></friction>
+            <contact><ode><kp>500000</kp><kd>10</kd><min_depth>0.001</min_depth><max_vel>0.1</max_vel></ode></contact>
+            <bounce><restitution_coefficient>0.0</restitution_coefficient><threshold>100000</threshold></bounce>
+          </surface></collision>
+        <visual name="vis"><geometry><sphere><radius>0.035</radius></sphere></geometry>
+          <material><ambient>0.95 0.55 0.05 1</ambient><diffuse>0.95 0.55 0.05 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Teal flat disc r=0.045 h=0.015 — hardest for gripper  z=0.7775 -->
+    <model name="tb_disc_teal">
+      <static>false</static><pose>2.35 -1.15 0.7775 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>0.10</mass>
+          <inertia><ixx>0.000026</ixx><iyy>0.000026</iyy><izz>0.000050</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+        <collision name="col"><geometry><cylinder><radius>0.045</radius><length>0.015</length></cylinder></geometry>
+          <surface><friction><ode><mu>0.6</mu><mu2>0.6</mu2></ode></friction>
+            <contact><ode><kp>500000</kp><kd>10</kd><min_depth>0.001</min_depth><max_vel>0.1</max_vel></ode></contact>
+            <bounce><restitution_coefficient>0.0</restitution_coefficient><threshold>100000</threshold></bounce>
+          </surface></collision>
+        <visual name="vis"><geometry><cylinder><radius>0.045</radius><length>0.015</length></cylinder></geometry>
+          <material><ambient>0.05 0.70 0.65 1</ambient><diffuse>0.05 0.70 0.65 1</diffuse></material></visual>
       </link>
     </model>
 
