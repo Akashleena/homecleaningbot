@@ -26,7 +26,7 @@
     <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
     <plugin name='gz::sim::systems::Contact'          filename='gz-sim-contact-system'/>
     <plugin name='gz::sim::systems::Sensors'          filename='gz-sim-sensors-system'>
-      <render_engine>ogre2</render_engine>
+      <render_engine>ogre</render_engine>
     </plugin>
     <plugin name='gz::sim::systems::Imu' filename='gz-sim-imu-system'/>
 
@@ -751,6 +751,34 @@
         <visual name="vis"><geometry><cylinder><radius>0.045</radius><length>0.015</length></cylinder></geometry>
           <material><ambient>0.05 0.70 0.65 1</ambient><diffuse>0.05 0.70 0.65 1</diffuse></material></visual>
       </link>
-    </model>
+   </model>
+     <!--  <model name="diff_drive">
+      <self_collide>false</self_collide>
+      <pose>0 0 0.15 0 0 0</pose>
+      <include merge="true">
+        <uri>package://ros_gz_example_description/models/diff_drive</uri>
+      </include>
+
+      <plugin
+        filename="gz-sim-joint-state-publisher-system"
+        name="gz::sim::systems::JointStatePublisher">
+      </plugin>
+
+      <plugin
+        filename="gz-sim-pose-publisher-system"
+        name="gz::sim::systems::PosePublisher">
+        <publish_link_pose>true</publish_link_pose>
+        <use_pose_vector_msg>true</use_pose_vector_msg>
+        <static_publisher>true</static_publisher>
+        <static_update_frequency>1</static_update_frequency>
+      </plugin>
+
+      <plugin
+        filename="gz-sim-odometry-publisher-system"
+        name="gz::sim::systems::OdometryPublisher">
+        <odom_frame>diff_drive/odom</odom_frame>
+        <robot_base_frame>diff_drive</robot_base_frame>
+      </plugin>
+    </model> -->
   </world>
 </sdf>

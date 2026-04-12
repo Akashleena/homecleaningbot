@@ -64,14 +64,30 @@ def generate_launch_description():
             {'robot_description': robot_desc},
         ]
     )
+    
+    spawn_robot = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-name', 'diff_drive',
+            '-string', robot_desc,
+            '-x', '-2.0',
+            '-y', '-0.6',
+            '-z', '0.15',
+            '-Y', '0.0'
+        ],
+        output='screen'
+    )
 
     # Visualize in RViz
     rviz = Node(
-       package='rviz2',
-       executable='rviz2',
-       arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'diff_drive.rviz')],
-       condition=IfCondition(LaunchConfiguration('rviz'))
-    )
+        package='rviz2',
+        executable='rviz2',
+        arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'diff_drive.rviz')],
+        condition=IfCondition(LaunchConfiguration('rviz'))
+        )
+    
+    
 
     # Bridge ROS topics and Gazebo messages for establishing communication
     bridge = Node(
@@ -83,6 +99,7 @@ def generate_launch_description():
         }],
         output='screen'
     )
+    
 
     return LaunchDescription([
         gz_sim,
@@ -90,5 +107,6 @@ def generate_launch_description():
                               description='Open RViz.'),
         bridge,
         robot_state_publisher,
+        spawn_robot,
         rviz
     ])
