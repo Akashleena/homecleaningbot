@@ -1,0 +1,444 @@
+<?xml version="1.0"?>
+<robot name="diff_drive">
+
+  <!-- ============================================================
+       BASE FOOTPRINT - standard Nav2 root frame
+       ============================================================ -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="chassis"/>
+    <origin xyz="0 0 0.175" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ============================================================
+       CHASSIS
+       ============================================================ -->
+  <link name="chassis">
+    <visual>
+      <geometry>
+        <box size="0.4 0.3 0.15"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0.2 0.2 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.4 0.3 0.15"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="5.0"/>
+      <inertia ixx="0.046875" ixy="0" ixz="0"
+               iyy="0.076041" iyz="0" izz="0.104166"/>
+    </inertial>
+  </link>
+
+  <!-- ============================================================
+       WHEELS
+       ============================================================ -->
+  <joint name="front_left_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="front_left_wheel"/>
+    <origin xyz="0.15 0.175 -0.075" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.1" friction="0.02"/>
+  </joint>
+  <link name="front_left_wheel">
+    <visual>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+      <material name="black"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.00219" ixy="0" ixz="0"
+               iyy="0.00219" iyz="0" izz="0.0025"/>
+    </inertial>
+  </link>
+
+  <joint name="front_right_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="front_right_wheel"/>
+    <origin xyz="0.15 -0.175 -0.075" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.1" friction="0.02"/>
+  </joint>
+  <link name="front_right_wheel">
+    <visual>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.00219" ixy="0" ixz="0"
+               iyy="0.00219" iyz="0" izz="0.0025"/>
+    </inertial>
+  </link>
+
+  <joint name="rear_left_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="rear_left_wheel"/>
+    <origin xyz="-0.15 0.175 -0.075" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.1" friction="0.02"/>
+  </joint>
+  <link name="rear_left_wheel">
+    <visual>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.00219" ixy="0" ixz="0"
+               iyy="0.00219" iyz="0" izz="0.0025"/>
+    </inertial>
+  </link>
+
+  <joint name="rear_right_wheel_joint" type="continuous">
+    <parent link="chassis"/>
+    <child link="rear_right_wheel"/>
+    <origin xyz="-0.15 -0.175 -0.075" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.1" friction="0.02"/>
+  </joint>
+  <link name="rear_right_wheel">
+    <visual>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.1" length="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.00219" ixy="0" ixz="0"
+               iyy="0.00219" iyz="0" izz="0.0025"/>
+    </inertial>
+  </link>
+
+  <!-- ============================================================
+       TORSO
+       SDF: relative_to="chassis" 0 0 0.275 0 0 0
+       ============================================================ -->
+  <joint name="torso_joint" type="fixed">
+    <parent link="chassis"/>
+    <child link="torso"/>
+    <origin xyz="0 0 0.275" rpy="0 0 0"/>
+  </joint>
+  <link name="torso">
+    <visual>
+      <geometry><box size="0.20 0.15 0.40"/></geometry>
+      <material name="light_blue"><color rgba="0.7 0.7 0.9 1"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.20 0.15 0.40"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="3.0"/>
+      <inertia ixx="0.045625" ixy="0" ixz="0"
+               iyy="0.05" iyz="0" izz="0.015625"/>
+    </inertial>
+  </link>
+
+  <!-- ============================================================
+       IMU LINK
+       SDF: relative_to="chassis" 0 0 0.01 0 0 0
+       ============================================================ -->
+  <joint name="imu_joint" type="fixed">
+    <parent link="chassis"/>
+    <child link="imu_link"/>
+    <origin xyz="0 0 0.01" rpy="0 0 0"/>
+  </joint>
+  <link name="imu_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0"
+               iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+
+  <!-- ============================================================
+       BUMPER LINK
+       SDF: relative_to="chassis" 0.21 0 0 0 0 0
+       ============================================================ -->
+  <joint name="bumper_joint" type="fixed">
+    <parent link="chassis"/>
+    <child link="bumper_link"/>
+    <origin xyz="0.21 0 0" rpy="0 0 0"/>
+  </joint>
+  <link name="bumper_link">
+    <visual>
+      <geometry><box size="0.01 0.28 0.10"/></geometry>
+      <material name="orange"><color rgba="1.0 0.3 0.0 1"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.01 0.28 0.10"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0"
+               iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+  </link>
+
+  <!-- ============================================================
+       LIDAR LINK - critical for Nav2/SLAM
+       SDF: relative_to="chassis" 0 0 0.15 0 0 0
+       ============================================================ -->
+  <joint name="lidar_joint" type="fixed">
+    <parent link="chassis"/>
+    <child link="lidar_link"/>
+    <origin xyz="0 0 0.15" rpy="0 0 0"/>
+  </joint>
+  <link name="lidar_link">
+    <visual>
+      <geometry><cylinder radius="0.05" length="0.04"/></geometry>
+      <material name="dark"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.000166" ixy="0" ixz="0"
+               iyy="0.000166" iyz="0" izz="0.000166"/>
+    </inertial>
+  </link>
+
+  <!-- ============================================================
+       RIGHT ARM — 3DOF (shoulder, elbow, wrist)
+       SDF shoulder_joint pose relative_to="torso": 0 -0.10 0.10 0 0 0
+       upper_arm_right relative_to="shoulder_joint": 0 0 -0.10 0 0 0
+       ============================================================ -->
+  <joint name="shoulder_joint" type="revolute">
+    <parent link="torso"/>
+    <child link="upper_arm_right"/>
+    <origin xyz="0 -0.10 0.10" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708" effort="20" velocity="1.0"/>
+    <dynamics damping="1.0" friction="0.2"/>
+  </joint>
+  <link name="upper_arm_right">
+    <!-- SDF pose relative_to="shoulder_joint": 0 0 -0.10
+         In URDF the visual/collision origin compensates -->
+    <visual>
+      <origin xyz="0 0 -0.10" rpy="0 0 0"/>
+      <geometry><box size="0.06 0.06 0.20"/></geometry>
+      <material name="arm_blue"><color rgba="0.6 0.6 0.85 1"/></material>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 -0.10" rpy="0 0 0"/>
+      <mass value="0.30"/>
+      <inertia ixx="0.00109" ixy="0" ixz="0"
+               iyy="0.00109" iyz="0" izz="0.00018"/>
+    </inertial>
+  </link>
+
+  <joint name="elbow_joint" type="revolute">
+    <parent link="upper_arm_right"/>
+    <child link="forearm_right"/>
+    <origin xyz="0 0 -0.10" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.0944" upper="0.0" effort="15" velocity="1.0"/>
+    <dynamics damping="0.8" friction="0.15"/>
+  </joint>
+  <link name="forearm_right">
+    <visual>
+      <origin xyz="0 0 -0.09" rpy="0 0 0"/>
+      <geometry><box size="0.05 0.05 0.18"/></geometry>
+      <material name="arm_blue"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 -0.09" rpy="0 0 0"/>
+      <mass value="0.20"/>
+      <inertia ixx="0.000582" ixy="0" ixz="0"
+               iyy="0.000582" iyz="0" izz="0.000083"/>
+    </inertial>
+  </link>
+
+  <joint name="wrist_joint" type="revolute">
+    <parent link="forearm_right"/>
+    <child link="wrist_right"/>
+    <origin xyz="0 0 -0.09" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708" effort="10" velocity="1.0"/>
+    <dynamics damping="0.5" friction="0.1"/>
+  </joint>
+  <link name="wrist_right">
+    <visual>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <geometry><box size="0.05 0.05 0.10"/></geometry>
+      <material name="arm_light"><color rgba="0.5 0.5 0.75 1"/></material>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <mass value="0.10"/>
+      <inertia ixx="0.000104" ixy="0" ixz="0"
+               iyy="0.000104" iyz="0" izz="0.000042"/>
+    </inertial>
+  </link>
+
+  <!-- GRIPPER BASE
+       SDF: relative_to="wrist_right" 0 0 -0.05  then link pose 0 0 -0.015 -->
+  <joint name="gripper_base_joint" type="fixed">
+    <parent link="wrist_right"/>
+    <child link="gripper_base"/>
+    <origin xyz="0 0 -0.065" rpy="0 0 0"/>
+  </joint>
+  <link name="gripper_base">
+    <visual>
+      <geometry><box size="0.10 0.08 0.03"/></geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.10 0.08 0.03"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.08"/>
+      <inertia ixx="0.0000487" ixy="0" ixz="0"
+               iyy="0.0000727" iyz="0" izz="0.0001093"/>
+    </inertial>
+  </link>
+
+  <!-- LEFT FINGER — prismatic
+       SDF: relative_to="gripper_base" 0 0.02 -0.03 -->
+  <joint name="left_finger_joint" type="prismatic">
+    <parent link="gripper_base"/>
+    <child link="left_finger"/>
+    <origin xyz="0 0.02 -0.03" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0" upper="0.04" effort="5" velocity="0.5"/>
+    <dynamics damping="0.3" friction="0.05"/>
+  </joint>
+  <link name="left_finger">
+    <visual>
+      <geometry><box size="0.015 0.012 0.06"/></geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.015 0.012 0.06"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.02"/>
+      <inertia ixx="6.24e-6" ixy="0" ixz="0"
+               iyy="6.24e-6" iyz="0" izz="6.2e-7"/>
+    </inertial>
+  </link>
+
+  <!-- RIGHT FINGER — prismatic
+       SDF: relative_to="gripper_base" 0 -0.02 -0.03, axis 0 -1 0 -->
+  <joint name="right_finger_joint" type="prismatic">
+    <parent link="gripper_base"/>
+    <child link="right_finger"/>
+    <origin xyz="0 -0.02 -0.03" rpy="0 0 0"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="0" upper="0.04" effort="5" velocity="0.5"/>
+    <dynamics damping="0.3" friction="0.05"/>
+  </joint>
+  <link name="right_finger">
+    <visual>
+      <geometry><box size="0.015 0.012 0.06"/></geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.015 0.012 0.06"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.02"/>
+      <inertia ixx="6.24e-6" ixy="0" ixz="0"
+               iyy="6.24e-6" iyz="0" izz="6.2e-7"/>
+    </inertial>
+  </link>
+
+  <!-- ============================================================
+       LEFT ARM — fixed joints (cosmetic)
+       SDF shoulder_joint_left relative_to="torso": 0 0.10 0.10 0 0 0
+       ============================================================ -->
+  <joint name="shoulder_joint_left" type="fixed">
+    <parent link="torso"/>
+    <child link="upper_arm_left"/>
+    <origin xyz="0 0.10 0.10" rpy="0 0 0"/>
+  </joint>
+  <link name="upper_arm_left">
+    <visual>
+      <origin xyz="0 0 -0.10" rpy="0 0 0"/>
+      <geometry><box size="0.06 0.06 0.20"/></geometry>
+      <material name="arm_blue"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 -0.10" rpy="0 0 0"/>
+      <mass value="0.30"/>
+      <inertia ixx="0.00109" ixy="0" ixz="0"
+               iyy="0.00109" iyz="0" izz="0.00018"/>
+    </inertial>
+  </link>
+
+  <joint name="elbow_joint_left" type="fixed">
+    <parent link="upper_arm_left"/>
+    <child link="forearm_left"/>
+    <origin xyz="0 0 -0.10" rpy="0 0 0"/>
+  </joint>
+  <link name="forearm_left">
+    <visual>
+      <origin xyz="0 0 -0.09" rpy="0 0 0"/>
+      <geometry><box size="0.05 0.05 0.18"/></geometry>
+      <material name="arm_blue"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 -0.09" rpy="0 0 0"/>
+      <mass value="0.20"/>
+      <inertia ixx="0.000582" ixy="0" ixz="0"
+               iyy="0.000582" iyz="0" izz="0.000083"/>
+    </inertial>
+  </link>
+
+  <joint name="wrist_joint_left" type="fixed">
+    <parent link="forearm_left"/>
+    <child link="wrist_left"/>
+    <origin xyz="0 0 -0.09" rpy="0 0 0"/>
+  </joint>
+  <link name="wrist_left">
+    <visual>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <geometry><box size="0.05 0.05 0.10"/></geometry>
+      <material name="arm_light"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <mass value="0.10"/>
+      <inertia ixx="0.000104" ixy="0" ixz="0"
+               iyy="0.000104" iyz="0" izz="0.000042"/>
+    </inertial>
+  </link>
+
+  <!-- ============================================================
+       FACE PANEL
+       SDF: face_panel_joint relative_to="torso" 0.09 0 0.13
+            face_panel link pose relative_to joint: 0 0 0.07
+       ============================================================ -->
+  <joint name="face_panel_joint" type="fixed">
+    <parent link="torso"/>
+    <child link="face_panel"/>
+    <origin xyz="0.09 0 0.20" rpy="0 0 0"/>
+  </joint>
+  <link name="face_panel">
+    <visual>
+      <geometry><box size="0.18 0.03 0.14"/></geometry>
+      <material name="cyan"><color rgba="0.0 1.0 1.0 1"/></material>
+    </visual>
+    <inertial>
+      <mass value="0.05"/>
+      <inertia ixx="3.24e-5" ixy="0" ixz="0"
+               iyy="4.33e-5" iyz="0" izz="1.89e-5"/>
+    </inertial>
+  </link>
+
+</robot>

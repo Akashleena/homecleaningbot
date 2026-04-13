@@ -16,6 +16,7 @@ slam_toolbox:
     scan_topic: /diff_drive/scan
     use_sim_time: true
     use_map_saver: true
+    laser_frame: lidar_link
     mode: mapping #localization
 
     # if you'd like to immediately start continuing a map at a given pose
