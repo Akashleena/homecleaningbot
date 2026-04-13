@@ -10,6 +10,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_homebot_nav = get_package_share_directory('homebot_navigation')
+    pkg_bringup = get_package_share_directory('ros_gz_example_bringup')
 
     rviz_launch_arg = DeclareLaunchArgument(
         'rviz',
@@ -21,6 +22,16 @@ def generate_launch_description():
         'use_sim_time',
         default_value='true',
         description='Use simulation time'
+    )
+
+    # Include robot + sim + bridge + EKF bringup
+    diff_drive_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_bringup, 'launch', 'diff_drive.launch.py')
+        ),
+        launch_arguments={
+            'rviz': 'false',
+        }.items()
     )
 
     slam_toolbox_launch_path = os.path.join(
@@ -66,6 +77,7 @@ def generate_launch_description():
     return LaunchDescription([
         rviz_launch_arg,
         use_sim_time_arg,
+        diff_drive_launch,
         rviz_node,
         TimerAction(
             period=10.0,
