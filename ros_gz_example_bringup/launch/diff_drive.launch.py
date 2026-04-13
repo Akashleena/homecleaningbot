@@ -52,18 +52,27 @@ def generate_launch_description():
         pkg_project_gazebo, 'worlds', 'home.sdf'
         ]), TextSubstitution(text=' -r --render-engine ogre')]}.items(),
     )
+    # Headless mode
+    # gz_sim = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
+    #     launch_arguments={'gz_args': [PathJoinSubstitution([
+    #     pkg_project_gazebo, 'worlds', 'home.sdf'
+    #     ]), TextSubstitution(text=' -r -s')]}.items(),
+    # )
 
-    # Takes the description and joint angles as inputs and publishes the 3D poses of the robot links
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        output='both',
-        parameters=[
-            {'use_sim_time': True},
-            {'robot_description': robot_desc},
-        ]
-    )
+
+    # # Takes the description and joint angles as inputs and publishes the 3D poses of the robot links
+    # robot_state_publisher = Node(
+    #     package='robot_state_publisher',
+    #     executable='robot_state_publisher',
+    #     name='robot_state_publisher',
+    #     output='both',
+    #     parameters=[
+    #         {'use_sim_time': True},
+    #         {'robot_description': robot_desc},
+    #     ]
+    # ) # we are not using urdf but sdf, so no need to use robot_state_publisher
     
     spawn_robot = Node(
         package='ros_gz_sim',
@@ -106,7 +115,6 @@ def generate_launch_description():
         DeclareLaunchArgument('rviz', default_value='true',
                               description='Open RViz.'),
         bridge,
-        robot_state_publisher,
         spawn_robot,
         rviz
     ])
