@@ -2,17 +2,6 @@
 <robot name="diff_drive">
 
   <!-- ============================================================
-       BASE FOOTPRINT - standard Nav2 root frame
-       ============================================================ -->
-  <link name="base_footprint"/>
-
-  <joint name="base_footprint_joint" type="fixed">
-    <parent link="base_footprint"/>
-    <child link="chassis"/>
-    <origin xyz="0 0 0.175" rpy="0 0 0"/>
-  </joint>
-
-  <!-- ============================================================
        CHASSIS
        ============================================================ -->
   <link name="chassis">
@@ -218,7 +207,8 @@
        SDF shoulder_joint pose relative_to="torso": 0 -0.10 0.10 0 0 0
        upper_arm_right relative_to="shoulder_joint": 0 0 -0.10 0 0 0
        ============================================================ -->
-  <joint name="shoulder_joint" type="revolute">
+  <!-- <joint name="shoulder_joint" type="revolute"> -->
+  <joint name="shoulder_joint" type="fixed">
     <parent link="torso"/>
     <child link="upper_arm_right"/>
     <origin xyz="0 -0.10 0.10" rpy="0 0 0"/>
@@ -242,7 +232,8 @@
     </inertial>
   </link>
 
-  <joint name="elbow_joint" type="revolute">
+  <!-- <joint name="elbow_joint" type="revolute"> -->
+  <joint name="elbow_joint" type="fixed">
     <parent link="upper_arm_right"/>
     <child link="forearm_right"/>
     <origin xyz="0 0 -0.10" rpy="0 0 0"/>
@@ -264,7 +255,8 @@
     </inertial>
   </link>
 
-  <joint name="wrist_joint" type="revolute">
+  <!-- <joint name="wrist_joint" type="revolute"> -->
+  <joint name="wrist_joint" type="fixed">
     <parent link="forearm_right"/>
     <child link="wrist_right"/>
     <origin xyz="0 0 -0.09" rpy="0 0 0"/>

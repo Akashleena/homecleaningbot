@@ -107,21 +107,16 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Visualize in RViz
-    rviz = Node(
-        package='rviz2',
-        executable='rviz2',
-        arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'diff_drive.rviz')],
-        condition=IfCondition(LaunchConfiguration('rviz'))
-    )
-
     # Bridge ROS topics and Gazebo messages
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
         parameters=[{
-            'config_file': os.path.join(pkg_project_bringup, 'config', 'ros_gz_example_bridge.yaml'),
-            'qos_overrides./tf_static.publisher.durability': 'transient_local',
+            'config_file': os.path.join(
+                pkg_project_bringup,
+                'config',
+                'ros_gz_example_bridge.yaml'
+            ),
         }],
         output='screen'
     )
@@ -148,6 +143,5 @@ def generate_launch_description():
         bridge,
         robot_state_publisher,
         spawn_robot,
-        ekf_node,
-        rviz
+        ekf_node
     ])
