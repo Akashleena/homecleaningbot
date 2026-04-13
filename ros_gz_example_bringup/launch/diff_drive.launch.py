@@ -96,7 +96,7 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('rviz'))
         )
     
-    
+   
 
     # Bridge ROS topics and Gazebo messages for establishing communication
     bridge = Node(
@@ -109,6 +109,20 @@ def generate_launch_description():
         output='screen'
     )
     
+    # EKF node for sensor fusion (wheel odometry + IMU)
+    ekf_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[
+            os.path.join(
+                get_package_share_directory('homebot_navigation'),
+                'config', 'ekf.yaml'
+            ),
+            {'use_sim_time': True}
+        ]
+    )
 
     return LaunchDescription([
         gz_sim,
@@ -116,5 +130,6 @@ def generate_launch_description():
                               description='Open RViz.'),
         bridge,
         spawn_robot,
+        ekf_node,
         rviz
     ])
