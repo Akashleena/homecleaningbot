@@ -158,6 +158,34 @@ velocity_smoother:
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
 
+collision_monitor:
+  ros__parameters:
+    use_sim_time: true
+    base_frame_id: "chassis"
+    odom_frame_id: "odom"
+    cmd_vel_in_topic: "cmd_vel"
+    cmd_vel_out_topic: "cmd_vel"
+    transform_tolerance: 0.2
+    source_timeout: 1.0
+    stop_pub_timeout: 2.0
+
+    polygons: ["PolygonStop"]
+    PolygonStop:
+      type: "polygon"
+      action_type: "stop"
+      min_points: 4
+      visualize: false
+      polygon_pub_topic: "polygon_stop"
+      points: "[[0.35, 0.25], [0.35, -0.25], [-0.25, -0.25], [-0.25, 0.25]]"
+
+    observation_sources: ["scan"]
+    scan:
+      type: "scan"
+      topic: "/diff_drive/scan"
+      min_height: 0.0
+      max_height: 2.0
+      enabled: true
+
 map_saver:
   ros__parameters:
     use_sim_time: true
