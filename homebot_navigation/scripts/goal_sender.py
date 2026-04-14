@@ -71,14 +71,12 @@ def main() -> None:
     wait_for_lifecycle_active(navigator, '/bt_navigator')
     # First-pass route through both rooms and doorway
     goals: List[Tuple[float, float, float]] = [
-        (-2.2, -1.8, 0.0),
-        (-2.2,  1.6, 1.57),
-        (-0.8,  0.0, 0.0),
-        ( 0.8, -0.2, 0.0),
-        ( 1.6, -0.7, 0.0),
-        ( 2.8, -1.2, 0.0),
-        ( 3.0,  1.4, 1.57),
-        ( 1.8,  1.2, 3.14),
+        (0.3, -0.1, 0.0),
+        (0.6,  0.1, 0.3),
+        (0.9,  0.0, 0.0),
+        (1.2,  0.2, 0.2),
+        (1.0, -0.3, -0.5),
+        (0.6, -0.6, -1.0),
     ]
 
     for i, (x, y, yaw) in enumerate(goals, start=1):
