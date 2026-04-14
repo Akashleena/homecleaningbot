@@ -3,11 +3,21 @@
 <package format="3">
   <name>homebot_navigation</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Homebot navigation with SLAM, AMCL, EKF, and Nav2</description>
   <maintainer email="akash13leena@gmail.com">aleenatron</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
+  <depend>slam_toolbox</depend>
+  <depend>nav2_bringup</depend>
+  <depend>nav2_map_server</depend>
+  <depend>nav2_amcl</depend>
+  <depend>nav2_simple_commander</depend>
+  <depend>geometry_msgs</depend>
+  <depend>rclpy</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

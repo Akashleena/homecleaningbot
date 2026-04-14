@@ -12,8 +12,8 @@ def generate_launch_description():
     pkg_homebot_nav = get_package_share_directory('homebot_navigation')
     pkg_bringup = get_package_share_directory('ros_gz_example_bringup')
 
-    rviz_launch_arg = DeclareLaunchArgument(
-        'rviz',
+    open_rviz_arg = DeclareLaunchArgument(
+        'open_rviz',
         default_value='true',
         description='Open RViz'
     )
@@ -69,13 +69,13 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         arguments=['-d', rviz_config_path],
-        condition=IfCondition(LaunchConfiguration('rviz')),
+        condition=IfCondition(LaunchConfiguration('open_rviz')),
         parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
         output='screen'
     )
 
     return LaunchDescription([
-        rviz_launch_arg,
+        open_rviz_arg,
         use_sim_time_arg,
         diff_drive_launch,
         rviz_node,
