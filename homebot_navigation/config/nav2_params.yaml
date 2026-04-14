@@ -34,8 +34,9 @@ controller_server:
   ros__parameters:
     use_sim_time: true
     controller_frequency: 10.0
+    # Nav2 Humble: use `progress_checker_plugin` (string). Plural list breaks configure.
     min_x_velocity_threshold: 0.001
-    min_y_velocity_threshold: 0.5
+    min_y_velocity_threshold: 0.001
     min_theta_velocity_threshold: 0.001
     failure_tolerance: 0.3
     odom_topic: /odometry/filtered
@@ -82,8 +83,9 @@ controller_server:
       trans_stopped_velocity: 0.05
       short_circuit_trajectory_evaluation: true
       stateful: true
-      critics: ["RotateToGoal", "ObstacleFootprint", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      ObstacleFootprint.scale: 0.02
+      critics: ["RotateToGoal", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      # critics: ["RotateToGoal", "ObstacleFootprint", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      BaseObstacle.scale: 0.02
       PathAlign.scale: 16.0
       PathAlign.forward_point_distance: 0.1
       GoalAlign.scale: 12.0
@@ -104,6 +106,16 @@ planner_server:
       tolerance: 0.5
       use_astar: false
       allow_unknown: true
+
+smoother_server:
+  ros__parameters:
+    use_sim_time: true
+    smoother_plugins: ["simple_smoother"]
+    simple_smoother:
+      plugin: "nav2_smoother::SimpleSmoother"
+      tolerance: 1.0e-10
+      max_its: 1000
+      do_refinement: true
 
 behavior_server:
   ros__parameters:
@@ -130,6 +142,29 @@ waypoint_follower:
     use_sim_time: true
     loop_rate: 20
     stop_on_failure: false
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: true
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.20, 0.0, 0.8]
+    min_velocity: [-0.20, 0.0, -0.8]
+    max_accel: [0.8, 0.0, 1.5]
+    max_decel: [-0.8, 0.0, -1.5]
+    odom_topic: "/odometry/filtered"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0
+
+map_saver:
+  ros__parameters:
+    use_sim_time: true
+    save_map_timeout: 10.0
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+    map_subscribe_transient_local: true
 
 map_server:
   ros__parameters:
@@ -182,8 +217,8 @@ local_costmap:
       update_frequency: 5.0
       publish_frequency: 2.0
       rolling_window: true
-      width: 4.0
-      height: 4.0
+      width: 4
+      height: 4
       resolution: 0.05
       robot_radius: 0.23
       always_send_full_costmap: true
@@ -207,32 +242,62 @@ local_costmap:
         cost_scaling_factor: 3.0
         inflation_radius: 0.35
 
-recoveries_server:
+# Required when using nav2_bringup with slam:=True so HasNodeParams matches and
+# SLAM uses the same frames/scan as the rest of the stack (single slam_toolbox).
+slam_toolbox:
   ros__parameters:
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+    odom_frame: odom
+    map_frame: map
+    base_frame: chassis
+    scan_topic: /diff_drive/scan
     use_sim_time: true
-    costmap_topic: local_costmap/costmap_raw
-    footprint_topic: local_costmap/published_footprint
-    cycle_frequency: 10.0
-    recovery_plugins: ["spin", "backup", "wait"]
-    spin:
-      plugin: "nav2_recoveries/Spin"
-    backup:
-      plugin: "nav2_recoveries/BackUp"
-    wait:
-      plugin: "nav2_recoveries/Wait"
-    global_frame: odom
-    robot_base_frame: chassis
-    transform_tolerance: 0.2
-
-lifecycle_manager:
-  ros__parameters:
-    use_sim_time: true
-    autostart: true
-    node_names:
-      - map_server
-      - amcl
-      - planner_server
-      - controller_server
-      - behavior_server
-      - bt_navigator
-      - waypoint_follower
+    use_map_saver: true
+    laser_frame: lidar_link
+    mode: mapping
+    debug_logging: false
+    throttle_scans: 1
+    transform_publish_period: 0.02
+    map_update_interval: 5.0
+    resolution: 0.05
+    max_laser_range: 10.0
+    minimum_time_interval: 0.1
+    transform_timeout: 0.2
+    tf_buffer_duration: 30.0
+    stack_size_to_use: 40000000
+    enable_interactive_mode: true
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.1
+    minimum_travel_heading: 0.1
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 10.0
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 1.5
+    loop_search_maximum_distance: 3.0
+    do_loop_closing: true
+    loop_match_minimum_chain_size: 10
+    loop_match_maximum_variance_coarse: 3.0
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+    distance_variance_penalty: 0.5
+    angle_variance_penalty: 1.0
+    fine_search_angle_offset: 0.00349
+    coarse_search_angle_offset: 0.349
+    coarse_angle_resolution: 0.0349
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    use_response_expansion: true
+    min_pass_through: 2
+    occupancy_threshold: 0.1
