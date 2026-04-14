@@ -28,11 +28,12 @@ def main() -> None:
     navigator = BasicNavigator()
 
     # Spawn pose from your diff_drive.launch.py
+    # Initial pose should match your spawn pose
     initial_pose = make_pose(navigator, -2.0, -0.6, 0.0)
     navigator.setInitialPose(initial_pose)
 
-    navigator.waitUntilNav2Active(localizer='')
-
+    # In SLAM mapping mode, wait for slam_toolbox instead of AMCL
+    navigator.waitUntilNav2Active(localizer='slam_toolbox')
     # First-pass route through both rooms and doorway
     goals: List[Tuple[float, float, float]] = [
         (-2.2, -1.8, 0.0),
