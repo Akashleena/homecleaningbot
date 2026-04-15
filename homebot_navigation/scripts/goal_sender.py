@@ -3,10 +3,21 @@
 import math
 import time
 from typing import List, Tuple
-
+from datetime import datetime
+from pathlib import Path
 import rclpy
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
+
+LOG_PATH = Path.home() / "ws_homebot" / "goal_results.log"
+
+
+def log_line(message: str) -> None:
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    line = f"[{timestamp}] {message}"
+    print(line, flush=True)
+    with open(LOG_PATH, "a", encoding="utf-8") as f:
+        f.write(line + "\n")
 
 
 def make_pose(navigator: BasicNavigator, x: float, y: float, yaw: float) -> PoseStamped:
@@ -26,10 +37,6 @@ def make_pose(navigator: BasicNavigator, x: float, y: float, yaw: float) -> Pose
 def publish_initial_pose(
     navigator: BasicNavigator, x: float, y: float, yaw: float, repeats: int = 3
 ) -> None:
-    """
-    Publish /initialpose a few times so localization/planner start from the
-    robot spawn pose without manual RViz interaction.
-    """
     pub = navigator.create_publisher(PoseWithCovarianceStamped, '/initialpose', 10)
     half_yaw = yaw / 2.0
 
@@ -58,48 +65,56 @@ def main() -> None:
     rclpy.init()
     navigator = BasicNavigator()
 
-    # Spawn pose from your diff_drive.launch.py
-    # Initial pose should match your spawn pose
+    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    log_line("===== NEW RUN STARTED =====")
+
+    # Initial pose
     spawn_x, spawn_y, spawn_yaw = -2.0, -0.6, 0.0
+    log_line(f"INITIAL_POSE x={spawn_x:.3f} y={spawn_y:.3f} yaw={spawn_yaw:.3f}")
+
     initial_pose = make_pose(navigator, spawn_x, spawn_y, spawn_yaw)
     navigator.setInitialPose(initial_pose)
     publish_initial_pose(navigator, spawn_x, spawn_y, spawn_yaw)
 
-    # In SLAM mapping mode, wait for slam_toolbox instead of AMCL
+    log_line("WAITING_FOR_NAV2")
     navigator.waitUntilNav2Active(localizer='slam_toolbox')
+    time.sleep(2.0)
+    log_line("NAV2_ACTIVE")
 
-    # First-pass route through both rooms and doorway
     goals: List[Tuple[float, float, float]] = [
-        (-2.2, -1.8, 0.0),
-        (-2.2,  1.6, 1.57),
-        (-0.8,  0.0, 0.0),
-        ( 0.8, -0.2, 0.0),
-        ( 1.6, -0.7, 0.0),
-        ( 2.8, -1.2, 0.0),
-        ( 3.0,  1.4, 1.57),
-        ( 1.8,  1.2, 3.14),
+        (0.6,  0.0,  0.0),
+        (0.8,  0.0,  0.0),
+        (1.0,  0.0,  0.0),
+        (1.0,  0.2,  0.0),
+        (0.8,  0.2,  0.0),
+        (0.6,  0.1,  0.0),
     ]
 
     for i, (x, y, yaw) in enumerate(goals, start=1):
         goal_pose = make_pose(navigator, x, y, yaw)
+
+        log_line(f"START goal={i} x={x:.3f} y={y:.3f} yaw={yaw:.3f}")
         navigator.goToPose(goal_pose)
+
+        start_time = time.time()
 
         while not navigator.isTaskComplete():
             time.sleep(0.2)
 
+        elapsed = time.time() - start_time
         result = navigator.getResult()
 
         if result == TaskResult.SUCCEEDED:
-            print(f'Goal {i} succeeded: x={x}, y={y}, yaw={yaw}')
+            log_line(f"SUCCESS goal={i} x={x:.3f} y={y:.3f} yaw={yaw:.3f} elapsed={elapsed:.2f}s")
         elif result == TaskResult.CANCELED:
-            print(f'Goal {i} canceled')
+            log_line(f"CANCELED goal={i} elapsed={elapsed:.2f}s")
             break
         elif result == TaskResult.FAILED:
-            print(f'Goal {i} failed: x={x}, y={y}, yaw={yaw}')
+            log_line(f"FAILED goal={i} x={x:.3f} y={y:.3f} yaw={yaw:.3f} elapsed={elapsed:.2f}s")
         else:
-            print(f'Goal {i} returned unknown result')
+            log_line(f"UNKNOWN goal={i} result={result}")
 
-    print('All goals processed.')
+    log_line("===== RUN FINISHED =====")
     rclpy.shutdown()
 
 

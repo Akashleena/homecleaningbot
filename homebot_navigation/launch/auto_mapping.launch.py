@@ -44,13 +44,15 @@ def generate_launch_description():
             'params_file': nav2_params,
             'autostart': 'True',
             'use_composition': 'True',
+            'use_respawn': 'False',
         }.items(),
     )
 
     # Nav2 publishes /cmd_vel; Gazebo bridge expects /diff_drive/cmd_vel
+   
     cmd_vel_relay = ExecuteProcess(
-        cmd=['ros2', 'run', 'topic_tools', 'relay', '/cmd_vel', '/diff_drive/cmd_vel'],
-        output='screen',
+    cmd=['ros2', 'run', 'topic_tools', 'relay', '/cmd_vel_smoothed', '/diff_drive/cmd_vel'],
+    output='screen',
     )
 
     rviz_node = Node(
